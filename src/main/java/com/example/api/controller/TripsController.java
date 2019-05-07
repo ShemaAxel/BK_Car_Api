@@ -25,6 +25,10 @@ public class TripsController {
 	/* to save */
 	@PostMapping("/trips")
 	public Trips create(@Valid @RequestBody Trips trip) {
+		int distance =calculateDistance(trip.getDepartureLat(),trip.getDepartureLong(),trip.getDestinationLat(),trip.getDepartureLong());
+		System.out.println(distance);
+		trip.setDistance(distance);
+		trip.setAmount(distance*400);//business logic changes
 		return tripDao.save(trip);
 	}
 	
@@ -57,11 +61,12 @@ public class TripsController {
 		
 		trip.setRiderId(details.getRiderId());
 		trip.setDriverId(details.getDriverId());
-		trip.setDeparture(details.getDeparture());
+		trip.setDestinationLat(details.getDestinationLat());
+		trip.setDestinationLong(details.getDestinationLong());
+		trip.setDepartureLong(details.getDestinationLong());
+		trip.setDepartureLat(details.getDepartureLat());
 		trip.setStatus(details.getStatus());
 		trip.setAmount(details.getAmount());
-		trip.setDeparture(details.getDeparture());
-		trip.setDestination(details.getDestination());
 		trip.setDistance(details.getDistance());
 		Trips update=tripDao.save(trip);
 		return ResponseEntity.ok().body(update);		
@@ -78,5 +83,24 @@ public class TripsController {
 		}
 		tripDao.delete(trip);
 		return ResponseEntity.ok().build();
+	}
+	
+	//calculations
+	public final static double AVERAGE_RADIUS_OF_EARTH = 6371;
+	public int calculateDistance(double userLat, double userLng, double venueLat, double venueLng) {
+
+	    double latDistance = Math.toRadians(userLat - venueLat);
+	    double lngDistance = Math.toRadians(userLng - venueLng);
+
+	    double a = (Math.sin(latDistance / 2) * Math.sin(latDistance / 2)) +
+	                    (Math.cos(Math.toRadians(userLat))) *
+	                    (Math.cos(Math.toRadians(venueLat))) *
+	                    (Math.sin(lngDistance / 2)) *
+	                    (Math.sin(lngDistance / 2));
+
+	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+	    return (int) (Math.round(AVERAGE_RADIUS_OF_EARTH * c));
+
 	}
 }

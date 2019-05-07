@@ -23,8 +23,10 @@ public class Trips {
 	private Long tripId;
 	private int driverId;
 	private int riderId;
-	private String departure;
-	private String destination;
+	private float departureLat;
+	private float departureLong;
+	private float destinationLat;
+	private float destinationLong;
 	private float distance;
 	private float amount;
 	private int status;
@@ -52,17 +54,30 @@ public class Trips {
 	public void setRiderId(int riderId) {
 		this.riderId = riderId;
 	}
-	public String getDeparture() {
-		return departure;
+
+	public float getDepartureLat() {
+		return departureLat;
 	}
-	public void setDeparture(String departure) {
-		this.departure = departure;
+	public void setDepartureLat(float departureLat) {
+		this.departureLat = departureLat;
 	}
-	public String getDestination() {
-		return destination;
+	public float getDepartureLong() {
+		return departureLong;
 	}
-	public void setDestination(String destination) {
-		this.destination = destination;
+	public void setDepartureLong(float departureLong) {
+		this.departureLong = departureLong;
+	}
+	public float getDestinationLat() {
+		return destinationLat;
+	}
+	public void setDestinationLat(float destinationLat) {
+		this.destinationLat = destinationLat;
+	}
+	public float getDestinationLong() {
+		return destinationLong;
+	}
+	public void setDestinationLong(float destinationLong) {
+		this.destinationLong = destinationLong;
 	}
 	public float getDistance() {
 		return distance;
