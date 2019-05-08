@@ -1,9 +1,14 @@
 package com.example.api.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,18 +22,42 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.api.dao.TripsDao;
 import com.example.api.model.Trips;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 @RestController
 @RequestMapping("/api")
 public class TripsController {
+	OkHttpClient client = new OkHttpClient();
 	@Autowired
 	TripsDao tripDao;
 	/* to save */
 	@PostMapping("/trips")
 	public Trips create(@Valid @RequestBody Trips trip) {
-		int distance =calculateDistance(trip.getDepartureLat(),trip.getDepartureLong(),trip.getDestinationLat(),trip.getDepartureLong());
-		System.out.println(distance);
-		trip.setDistance(distance);
-		trip.setAmount(distance*400);//business logic changes
+		
+		
+		try {
+			String response = this.calculate(trip.getDepartureLat(), trip.getDepartureLong(), trip.getDestinationLat(), trip.getDestinationLong());
+			System.out.println(response);
+			 JSONParser parser = new JSONParser();
+	         Object obj = parser.parse(response);
+	         JSONObject jsonobj=(JSONObject)obj;
+	         JSONArray dist=(JSONArray)jsonobj.get("rows");
+	         JSONObject obj2 = (JSONObject)dist.get(0);
+	         JSONArray disting=(JSONArray)obj2.get("elements");
+	         JSONObject obj3 = (JSONObject)disting.get(0);
+	         JSONObject obj4=(JSONObject)obj3.get("distance");
+	         //JSONObject duration=(JSONObject)obj3.get("duration");
+	         String distance = (String) obj4.get("text");
+	         double realDistance =Double.parseDouble(distance.substring(0, distance.length()-3));
+	         trip.setDistance(realDistance);
+	         trip.setAmount(realDistance*300);//business logic
+	         
+		} catch (IOException | ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return tripDao.save(trip);
 	}
 	
@@ -59,8 +88,8 @@ public class TripsController {
 		
 		//all attributes
 		
-		trip.setRiderId(details.getRiderId());
-		trip.setDriverId(details.getDriverId());
+//		trip.setRiderId(details.getRiderId());
+//		trip.setDriverId(details.getDriverId());
 		trip.setDestinationLat(details.getDestinationLat());
 		trip.setDestinationLong(details.getDestinationLong());
 		trip.setDepartureLong(details.getDestinationLong());
@@ -85,22 +114,14 @@ public class TripsController {
 		return ResponseEntity.ok().build();
 	}
 	
-	//calculations
-	public final static double AVERAGE_RADIUS_OF_EARTH = 6371;
-	public int calculateDistance(double userLat, double userLng, double venueLat, double venueLng) {
+	//google matrix api
+	public String calculate(double depLat,double depLong,double destLat,double dstLong) throws IOException {
+		String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+depLat+","+depLong+"&destinations="+destLat+","+depLong+"&key=AIzaSyDUYbTR-3PDWPhgxjENs4yf35g2eHc641s";
+		Request request = new Request.Builder().url(url).build();
 
-	    double latDistance = Math.toRadians(userLat - venueLat);
-	    double lngDistance = Math.toRadians(userLng - venueLng);
-
-	    double a = (Math.sin(latDistance / 2) * Math.sin(latDistance / 2)) +
-	                    (Math.cos(Math.toRadians(userLat))) *
-	                    (Math.cos(Math.toRadians(venueLat))) *
-	                    (Math.sin(lngDistance / 2)) *
-	                    (Math.sin(lngDistance / 2));
-
-	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-	    return (int) (Math.round(AVERAGE_RADIUS_OF_EARTH * c));
-
+		Response response = client.newCall(request).execute();
+		return response.body().string();
 	}
+
+	
 }

@@ -1,14 +1,11 @@
 package com.example.api.model;
 
 import java.util.Date;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -16,12 +13,11 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name="Driver")
 @EntityListeners(AuditingEntityListener.class)
 public class Driver {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long driverId;
+	private int driverId;
 	private String driverName;
 	private String email;
 	private String msisdn;
@@ -31,12 +27,12 @@ public class Driver {
 	private Date createdAt = new Date();
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate
-	@Column(nullable = false,columnDefinition="default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP")
 	private Date modifiedAt = new Date();
-	public Long getDriverId() {
+	
+	public int getDriverId() {
 		return driverId;
 	}
-	public void setDriverId(Long driverId) {
+	public void setDriverId(int driverId) {
 		this.driverId = driverId;
 	}
 	public String getDriverName() {
