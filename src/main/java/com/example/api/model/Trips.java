@@ -26,7 +26,8 @@ public class Trips {
 	private float destinationLat;
 	private float destinationLong;
 	private double distance;
-	private double amount;
+	private double dueAmount;
+	private double pendingAmount;
 	private int status;
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate
@@ -98,13 +99,21 @@ public class Trips {
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}
-
-	public double getAmount() {
-		return amount;
+	
+	public double getDueAmount() {
+		return dueAmount;
 	}
 
-	public void setAmount(double amount) {
-		this.amount = amount;
+	public void setDueAmount(double dueAmount) {
+		this.dueAmount = dueAmount;
+	}
+
+	public double getPendingAmount() {
+		return pendingAmount;
+	}
+
+	public void setPendingAmount(double pendingAmount) {
+		this.pendingAmount = pendingAmount;
 	}
 
 	public int getStatus() {

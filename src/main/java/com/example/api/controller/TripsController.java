@@ -52,7 +52,7 @@ public class TripsController {
 	         String distance = (String) obj4.get("text");
 	         double realDistance =Double.parseDouble(distance.substring(0, distance.length()-3));
 	         trip.setDistance(realDistance);
-	         trip.setAmount(realDistance*300);//business logic
+	         trip.setDueAmount(realDistance*300);//business logic
 	         
 		} catch (IOException | ParseException e) {
 			// TODO Auto-generated catch block
@@ -95,7 +95,8 @@ public class TripsController {
 		trip.setDepartureLong(details.getDestinationLong());
 		trip.setDepartureLat(details.getDepartureLat());
 		trip.setStatus(details.getStatus());
-		trip.setAmount(details.getAmount());
+		trip.setDueAmount(details.getDueAmount());
+		trip.setPendingAmount(details.getPendingAmount());
 		trip.setDistance(details.getDistance());
 		Trips update=tripDao.save(trip);
 		return ResponseEntity.ok().body(update);		

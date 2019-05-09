@@ -17,26 +17,35 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.api.dao.DriverDao;
 import com.example.api.model.Driver;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 @RestController
 @RequestMapping("/api")
 public class DriverController {
+	
+	Logger log = LoggerFactory .getLogger(this.getClass());
+	
 	@Autowired
 	DriverDao driverDao;
 	/* to save */
 	@PostMapping("/drivers")
 	public Driver create(@Valid @RequestBody Driver driver) {
+		log.info("User accessed /drivers POST");
 		return driverDao.save(driver);
 	}
 	
 	/*get all */
 	@GetMapping("/drivers")
 	public List<Driver> getAll(){
+		log.info("User accessed /drivers GET all");
 		return driverDao.findAll();
 	}
 	
 	/*get by id*/
 	@GetMapping("/drivers/{id}")
 	public ResponseEntity<Driver> getById(@PathVariable(value="id") Long id){
+		log.info("User accessed /drivers/{"+id+"} GET ");
 		Driver driver=driverDao.findOne(id);
 		if(driver==null) {
 			return ResponseEntity.notFound().build();
@@ -48,6 +57,7 @@ public class DriverController {
 	/*update a user by id*/
 	@PutMapping("/drivers/{id}")
 	public ResponseEntity<Driver> update(@PathVariable(value="id") Long id,@Valid @RequestBody Driver details){	
+		log.info("User accessed /drivers/{"+id+"} PUT ");
 		Driver driver=driverDao.findOne(id);
 		if(driver==null) {
 			return ResponseEntity.notFound().build();
@@ -67,7 +77,7 @@ public class DriverController {
 	/* Delete a User */
 	@DeleteMapping("/drivers/{id}")
 	public ResponseEntity<Driver> delete(@PathVariable(value="id") Long id){
-		
+		log.info("User accessed /drivers/{"+id+"} DELETE ");
 		Driver driver =driverDao.findOne(id);
 		if(driver == null) {
 			return ResponseEntity.notFound().build();

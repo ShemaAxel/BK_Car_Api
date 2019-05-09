@@ -10,6 +10,8 @@ public class TestDatabaseSetup {
     public static void execute(Operation op) {
         try {
             DriverManager.deregisterDriver(new com.mysql.jdbc.Driver());
+//            DriverManagerDestination dest = new DriverManagerDestination(
+//                    "jdbc:sqlite:/home/exodus/Documents/BK_Car_Api.db", "", "");
             DriverManagerDestination dest = new DriverManagerDestination(
                     "jdbc:mysql://localhost:3306/BK_Car_Api", "axel", "ax3l1234");
             DbSetup ds = new DbSetup(dest, op);
